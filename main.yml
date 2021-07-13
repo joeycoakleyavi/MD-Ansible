@@ -1,0 +1,62 @@
+---
+- name: Virtual Service Migration
+  hosts: ctl
+  become: no
+  gather_facts: no
+  connection: local
+  roles:
+    - role: "avinetworks.avisdk"
+  vars_files:
+    - vars.yml
+  
+  tasks:
+    - name: Get API Object of current SEG
+      avi_api_session:
+        avi_credentials: "{{ avi_credentials }}"
+        api_version: "{{ avi_credentials.api_version }}"
+        http_method: get
+        timeout: 300
+        path: "serviceenginegroup?name={{ cur_seg }}&cloud_ref.name={{ cloud_name }}"
+      register: current_se_group
+
+    - name: Get API Object of new SEG
+      avi_api_session:
+        avi_credentials: "{{ avi_credentials }}"
+        api_version: "{{ avi_credentials.api_version }}"
+        http_method: get
+        timeout: 300
+        path: "serviceenginegroup?name={{ new_seg }}&cloud_ref.name={{ cloud_name }}"
+      register: new_se_group
+
+    - name: Capture all vsvip_ref data for virtual services on current SEG
+      avi_api_session:
+        avi_credentials: "{{ avi_credentials }}"
+        api_version: "{{ avi_credentials.api_version }}"
+        http_method: get
+        timeout: 300
+        path: virtualservice?se_group_ref.name={{ cur_seg }}&cloud_ref.name={{ cloud_name }}&fields=vsvip_ref
+      register: vsvip_ref_obj
+
+    - name: Migrate all shared VSVIP virtual services
+      include_role:
+        name: migrate_virtualservice
+      loop: "{{ (vsvip_ref_obj | filter_vs).shared }}"
+      loop_control:
+        loop_var: vsvip
+      when: 
+        - (vsvip_ref_obj | filter_vs).shared | length > 0
+        - migrate_shared_vsvip 
+
+    - name: Migrate all unique VSVIP virtual services
+      include_role:
+        name: migrate_virtualservice
+      loop: "{{ (vsvip_ref_obj | filter_vs).unique }}"
+      loop_control:
+        loop_var: vsvip
+      when: 
+        - (vsvip_ref_obj | filter_vs).unique | length > 0
+        - migrate_unique_vsvip
+
+    - debug: msg="Migration Complete!"
+
+

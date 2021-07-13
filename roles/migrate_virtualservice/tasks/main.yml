@@ -1,0 +1,41 @@
+---
+- name: Gather virtualservice uuid of vsvip
+  avi_api_session:
+    avi_credentials: "{{ avi_credentials }}"
+    api_version: "{{ avi_credentials.api_version }}"
+    http_method: get
+    timeout: 300
+    path: "virtualservice?vsvip_ref={{ vsvip }}&cloud_ref.name={{ cloud_name }}&fields=uuid"
+  register: virtualservice_obj
+
+- debug: msg="Virtual Services found with vsvip_ref {{ vsvip }}......{{ virtualservice_obj.obj.results }}"
+
+- name: Disable virtualservice(s) with vsvip {{ vsvip }}
+  avi_virtualservice:
+    avi_credentials: "{{ avi_credentials }}"
+    api_version: "{{ avi_credentials.api_version }}"
+    avi_api_update_method: patch
+    avi_api_patch_op: replace
+    name: "{{ item.name }}"
+    enabled: false
+  loop: "{{ virtualservice_obj.obj.results }}"
+
+- name: Update Service Engine Group from Current to New
+  avi_virtualservice:
+    avi_credentials: "{{ avi_credentials }}"
+    api_version: "{{ avi_credentials.api_version }}"
+    avi_api_update_method: patch
+    avi_api_patch_op: replace
+    name: "{{ item.name }}"
+    se_group_ref: '/api/serviceenginegroup/{{ new_se_group.obj.results[0].uuid }}'
+  loop: "{{ virtualservice_obj.obj.results }}"
+
+- name: Enable virtualservice(s) with vsvip {{ vsvip }}
+  avi_virtualservice:
+    avi_credentials: "{{ avi_credentials }}"
+    api_version: "{{ avi_credentials.api_version }}"
+    avi_api_update_method: patch
+    avi_api_patch_op: replace
+    name: "{{ item.name }}"
+    enabled: true
+  loop: "{{ virtualservice_obj.obj.results }}"
