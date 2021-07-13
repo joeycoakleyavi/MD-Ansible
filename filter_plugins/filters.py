@@ -1,5 +1,3 @@
-import jmespath
-
 class FilterModule(object):
     def filters(self):
         return {
@@ -21,9 +19,7 @@ class FilterModule(object):
         [ results['shared'].append(vsvip_ref) if vsvip_ref_list.count(vsvip_ref) > 1 else \
           results['unique'].append(vsvip_ref) for vsvip_ref in vsvip_ref_list ]
 
-
         # Dedupe shared list
         results['shared'] = list(set(results['shared']))
-
 
         return results
