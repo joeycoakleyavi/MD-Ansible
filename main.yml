@@ -44,5 +44,3 @@
         loop_var: vsvip_ip
 
     - debug: msg="Migration Complete!"
-
-
