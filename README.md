@@ -35,8 +35,9 @@ cur_seg: My-SEG-2                                           <--- Existing Servic
 new_seg: Default-Group                                      <--- New Service Engine Group
 cloud_name: AWS                                             <--- Cloud Name 
 
-migrate_shared_vsvip: true                                  <--- Migrate virtual services which have shared VSVIP
-migrate_unique_vsvip: true                                  <--- Migrate virtual services which do not have shared VSVIP
+vsvip_migration_list:                                       <--- Add which IPs should be migrated as separate entries
+  - 10.20.200.100
+  - 10.20.200.194
 ```
 
 Once complete, you can run the Ansible playbook
