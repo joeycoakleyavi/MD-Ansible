@@ -5,7 +5,7 @@ This Ansible playbook can be used in scenarios where virtual services need to be
 This automation is tested using specific versions of Ansible and makes use of libraries which are needed for playbooks to execute successfully. When developing your own automation, it is highly encouraged to make use of Python's virtual environments to avoid conflicts with other version of packages which may already be installed.
 
 ```
-git clone git@github.com:joeycoakleyavi/MD-Ansible.git
+git clone https://github.com/joeycoakleyavi/MD-Ansible.git
 cd MD-Ansible
 python3 -m venv env
 source env/bin/activate
