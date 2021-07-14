@@ -16,8 +16,13 @@
         api_version: "{{ avi_credentials.api_version }}"
         http_method: get
         timeout: 300
-        path: "serviceenginegroup?name={{ cur_seg }}&cloud_ref.name={{ cloud_name }}"
+        path: serviceenginegroup
+        params:
+          name: "{{ cur_seg }}"
+          cloud_ref.name: "{{ cloud_name }}"
       register: current_se_group
+
+    - debug: msg="{{ current_se_group }}"
 
     - name: Get API Object of new SEG
       avi_api_session:
@@ -25,37 +30,18 @@
         api_version: "{{ avi_credentials.api_version }}"
         http_method: get
         timeout: 300
-        path: "serviceenginegroup?name={{ new_seg }}&cloud_ref.name={{ cloud_name }}"
+        path: serviceenginegroup
+        params:
+          name: "{{ new_seg }}"
+          cloud_ref.name: "{{ cloud_name }}"
       register: new_se_group
 
-    - name: Capture all vsvip_ref data for virtual services on current SEG
-      avi_api_session:
-        avi_credentials: "{{ avi_credentials }}"
-        api_version: "{{ avi_credentials.api_version }}"
-        http_method: get
-        timeout: 300
-        path: virtualservice?se_group_ref.name={{ cur_seg }}&cloud_ref.name={{ cloud_name }}&fields=vsvip_ref
-      register: vsvip_ref_obj
-
-    - name: Migrate all shared VSVIP virtual services
+    - name: Migrate List of VSVIP
       include_role:
         name: migrate_virtualservice
-      loop: "{{ (vsvip_ref_obj | filter_vs).shared }}"
+      loop: "{{ vsvip_migration_list }}"
       loop_control:
-        loop_var: vsvip
-      when: 
-        - (vsvip_ref_obj | filter_vs).shared | length > 0
-        - migrate_shared_vsvip 
-
-    - name: Migrate all unique VSVIP virtual services
-      include_role:
-        name: migrate_virtualservice
-      loop: "{{ (vsvip_ref_obj | filter_vs).unique }}"
-      loop_control:
-        loop_var: vsvip
-      when: 
-        - (vsvip_ref_obj | filter_vs).unique | length > 0
-        - migrate_unique_vsvip
+        loop_var: vsvip_ip
 
     - debug: msg="Migration Complete!"
 

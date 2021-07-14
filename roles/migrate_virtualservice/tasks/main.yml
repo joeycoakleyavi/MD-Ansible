@@ -1,16 +1,31 @@
 ---
-- name: Gather virtualservice uuid of vsvip
+- name: Gather VsVip_Ref of VIP IP
   avi_api_session:
     avi_credentials: "{{ avi_credentials }}"
     api_version: "{{ avi_credentials.api_version }}"
     http_method: get
     timeout: 300
-    path: "virtualservice?vsvip_ref={{ vsvip }}&cloud_ref.name={{ cloud_name }}&fields=uuid"
+    path: vsvip
+    params:
+      vip.contains: "{{ vsvip_ip }}"
+  register: vsvip_ref
+
+- set_fact:
+    vsvip: "{{ vsvip_ref.obj.results[0] }}"
+
+- name: Gather virtualservice UUID of vsvip
+  avi_api_session:
+    avi_credentials: "{{ avi_credentials }}"
+    api_version: "{{ avi_credentials.api_version }}"
+    http_method: get
+    timeout: 300
+    path: virtualservice
+    params:
+      vsvip_ref: "{{ vsvip.uuid }}"
+      cloud_ref.name: "{{ cloud_name }}"
   register: virtualservice_obj
 
-- debug: msg="Virtual Services found with vsvip_ref {{ vsvip }}......{{ virtualservice_obj.obj.results }}"
-
-- name: Disable virtualservice(s) with vsvip {{ vsvip }}
+- name: Disable virtualservice(s) with vsvip {{ vsvip.name }}
   avi_virtualservice:
     avi_credentials: "{{ avi_credentials }}"
     api_version: "{{ avi_credentials.api_version }}"
@@ -19,6 +34,7 @@
     name: "{{ item.name }}"
     enabled: false
   loop: "{{ virtualservice_obj.obj.results }}"
+  when: item.se_group_ref != new_se_group.obj.results[0].url
 
 - name: Update Service Engine Group from Current to New
   avi_virtualservice:
@@ -29,8 +45,9 @@
     name: "{{ item.name }}"
     se_group_ref: '/api/serviceenginegroup/{{ new_se_group.obj.results[0].uuid }}'
   loop: "{{ virtualservice_obj.obj.results }}"
+  when: item.se_group_ref != new_se_group.obj.results[0].url
 
-- name: Enable virtualservice(s) with vsvip {{ vsvip }}
+- name: Enable virtualservice(s) with vsvip {{ vsvip.name }}
   avi_virtualservice:
     avi_credentials: "{{ avi_credentials }}"
     api_version: "{{ avi_credentials.api_version }}"

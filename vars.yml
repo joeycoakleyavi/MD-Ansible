@@ -6,9 +6,14 @@ avi_credentials:
   api_version: 20.1.4
 ansible_python_interpreter: "{{ ansible_playbook_python }}"
 
-cur_seg: My-SEG-2
-new_seg: Default-Group
+#Service Engine Settings
+cur_seg: Default-Group
+new_seg: My-SEG-2
+
+#Cloud
 cloud_name: AWS
 
-migrate_shared_vsvip: true
-migrate_unique_vsvip: true
+#VsVIP Migration List
+vsvip_migration_list:
+  - 10.20.200.100
+  - 10.20.200.194
