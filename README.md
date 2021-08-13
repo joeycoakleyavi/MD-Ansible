@@ -45,4 +45,4 @@ Once complete, you can run the Ansible playbook
 `ansible-playbook main.yml`
 
 ## Compatibility
-This automation has been tested on Avi Vantage 20.1.4
+This automation has been tested on Avi Vantage 20.1.4 & 18.2.8
