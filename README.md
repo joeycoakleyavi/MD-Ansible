@@ -29,6 +29,7 @@ avi_credentials:
   username: admin                                           <--- Controller Username
   password:                                                 <--- Controller Password
   api_version: 20.1.4                                       <--- Your controller version
+  tenant: admin                                             <--- Which tenant does the VIP belong to?
 ansible_python_interpreter: "{{ ansible_playbook_python }}" <--- Do not edit
 
 cur_seg: My-SEG-2                                           <--- Existing Service Engine Group
