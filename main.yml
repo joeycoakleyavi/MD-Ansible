@@ -14,6 +14,7 @@
       avi_api_session:
         avi_credentials: "{{ avi_credentials }}"
         api_version: "{{ avi_credentials.api_version }}"
+        tenant: "{{ avi_credentials.tenant }}"
         http_method: get
         timeout: 300
         path: serviceenginegroup
@@ -28,6 +29,7 @@
       avi_api_session:
         avi_credentials: "{{ avi_credentials }}"
         api_version: "{{ avi_credentials.api_version }}"
+        tenant: "{{ avi_credentials.tenant }}"
         http_method: get
         timeout: 300
         path: serviceenginegroup

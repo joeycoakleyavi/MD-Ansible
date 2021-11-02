@@ -4,16 +4,16 @@ avi_credentials:
   username: admin
   password: SCRUBBED
   api_version: 20.1.4
+  tenant: admin
 ansible_python_interpreter: "{{ ansible_playbook_python }}"
 
 #Service Engine Settings
-cur_seg: Default-Group
-new_seg: My-SEG-2
+cur_seg: SEG1
+new_seg: SEG2
 
 #Cloud
 cloud_name: AWS
 
 #VsVIP Migration List
 vsvip_migration_list:
-  - 10.20.200.100
-  - 10.20.200.194
+  - 10.155.61.204

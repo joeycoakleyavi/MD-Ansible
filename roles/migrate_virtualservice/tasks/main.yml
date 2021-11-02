@@ -3,6 +3,7 @@
   avi_api_session:
     avi_credentials: "{{ avi_credentials }}"
     api_version: "{{ avi_credentials.api_version }}"
+    tenant: "{{ avi_credentials.tenant | default('admin') }}"
     http_method: get
     timeout: 300
     path: vsvip
@@ -17,6 +18,7 @@
   avi_api_session:
     avi_credentials: "{{ avi_credentials }}"
     api_version: "{{ avi_credentials.api_version }}"
+    tenant: "{{ avi_credentials.tenant }}"
     http_method: get
     timeout: 300
     path: virtualservice
@@ -29,6 +31,7 @@
   avi_virtualservice:
     avi_credentials: "{{ avi_credentials }}"
     api_version: "{{ avi_credentials.api_version }}"
+    tenant: "{{ avi_credentials.tenant }}"
     avi_api_update_method: patch
     avi_api_patch_op: replace
     name: "{{ item.name }}"
@@ -40,6 +43,7 @@
   avi_virtualservice:
     avi_credentials: "{{ avi_credentials }}"
     api_version: "{{ avi_credentials.api_version }}"
+    tenant: "{{ avi_credentials.tenant }}"
     avi_api_update_method: patch
     avi_api_patch_op: replace
     name: "{{ item.name }}"
@@ -51,6 +55,7 @@
   avi_virtualservice:
     avi_credentials: "{{ avi_credentials }}"
     api_version: "{{ avi_credentials.api_version }}"
+    tenant: "{{ avi_credentials.tenant }}"
     avi_api_update_method: patch
     avi_api_patch_op: replace
     name: "{{ item.name }}"
